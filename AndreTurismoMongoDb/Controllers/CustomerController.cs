@@ -10,7 +10,15 @@ namespace AndreTurismoMongoDb.Controllers
     public class CustomerController : ControllerBase
     {
         private readonly CustomerService _customerService;
-        public CustomerController(CustomerService customerService) => _customerService = customerService;
+        private readonly AddressService _addressService;
+        private readonly CityService _cityService;
+        public CustomerController(CustomerService customerService, AddressService addressService, CityService cityService)
+        {
+            _addressService = addressService;
+            _customerService = customerService;
+            _cityService = cityService;
+        }
+
 
         [HttpGet("/Customer")]
         public ActionResult<List<Customer>> Get() => _customerService.Get();
@@ -24,7 +32,29 @@ namespace AndreTurismoMongoDb.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Customer> Create(Customer customer) => _customerService.Create(customer);
+        public ActionResult<Customer> Create(Customer customer)
+        {
+            var addressFound = _addressService.Get(customer.Address.Id);
+            var cityFound = _cityService.GetByName(customer.Address.City.Description);
+            
+            if (addressFound == null && cityFound == null)
+            {
+                customer.Address.City = _cityService.Create(customer.Address.City);
+                customer.Address = _addressService.Create(customer.Address);
+            }
+            else if( addressFound != null && cityFound == null)
+            {
+                customer.Address.City = _cityService.Create(customer.Address.City);                
+                customer.Address = addressFound;
+            }
+            else //(addressFound == null && cityFound != null)
+            {
+                customer.Address.City = cityFound;
+                customer.Address = _addressService.Create(customer.Address);                
+            }           
+            _customerService.Create(customer);
+            return Ok();
+        }
 
         [HttpPut("{id:length(24)}")]
         public ActionResult<Customer> Update(string id, Customer customer)

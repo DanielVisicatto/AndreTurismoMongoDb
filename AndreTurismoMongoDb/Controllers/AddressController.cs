@@ -10,7 +10,12 @@ namespace AndreTurismoMongoDb.Controllers
     public class AddressController : ControllerBase
     {
         private readonly AddressService _addressService;
-        public AddressController(AddressService addressService) => _addressService = addressService;
+        private readonly CityService _cityService;
+        public AddressController(AddressService addressService, CityService cityService)
+        {
+            _addressService = addressService;
+            _cityService = cityService;
+        }
 
         [HttpGet("/Address")]
         public ActionResult<List<Address>> Get() => _addressService.Get();
@@ -24,7 +29,17 @@ namespace AndreTurismoMongoDb.Controllers
         }
 
         [HttpPost]
-        public ActionResult<Address> Create(Address address) => _addressService.Create(address);
+        public ActionResult<Address> Create(Address address)
+        {
+            var cityFound = _cityService.GetByName(address.City.Description);
+            if (cityFound == null)            
+                address.City = _cityService.Create(address.City);            
+            else            
+                address.City = cityFound;
+            
+            _addressService.Create(address);
+            return Ok();
+        }
 
         [HttpPut("{id:length(24)}")]
         public ActionResult<Address> Update(string id, Address address)

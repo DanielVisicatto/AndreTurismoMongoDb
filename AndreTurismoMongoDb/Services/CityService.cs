@@ -1,5 +1,6 @@
 ﻿using AndreTurismoMongoDb.Config;
 using AndreTurismoMongoDb.Models;
+using MongoDB.Bson;
 using MongoDB.Driver;
 
 namespace AndreTurismoMongoDb.Services
@@ -17,9 +18,11 @@ namespace AndreTurismoMongoDb.Services
 
         public List<City> Get() => _city.Find(x => true).ToList();
         public City Get(string id) => _city.Find<City>(x => x.Id == id).FirstOrDefault();
+        public City GetByName(string description) => _city.Find<City>(x => x.Description == description).FirstOrDefault();
         public City Create(City city)
         {
             _city.InsertOne(city);
+            city.Id = BsonObjectId.GenerateNewId().ToString();
             return city;
         }
         public void Update (string id, City city) => _city.ReplaceOne(x => x.Id == id, city);
