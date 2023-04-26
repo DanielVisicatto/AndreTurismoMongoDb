@@ -18,6 +18,8 @@ namespace AndreTurismoMongoDb.Services
 
         public List<Address> Get() => _address.Find(x => true).ToList();
         public Address Get(string id) => _address.Find<Address>(x => x.Id == id).FirstOrDefault();
+
+
         //public Address GetAddress(Address address) => 
         //    _address.Find(x =>       
         //x.Street        == address.Street        &&
@@ -28,7 +30,6 @@ namespace AndreTurismoMongoDb.Services
         //x.City          == address.City          &&
         //x.RegisterDate  == address.RegisterDate)
         //    .FirstOrDefault();
-
 
         public Address Create(Address address)
         {
