@@ -1,6 +1,5 @@
 ﻿using AndreTurismoMongoDb.Models;
 using AndreTurismoMongoDb.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AndreTurismoMongoDb.Controllers
@@ -15,7 +14,7 @@ namespace AndreTurismoMongoDb.Controllers
         [HttpGet("/City")]
         public ActionResult<List<City>> Get() => _cityService.Get();
 
-        [HttpGet("{id:length(24)}" , Name = "GetCity")]
+        [HttpGet(Name = "GetCity")]
         public ActionResult<City>Get(string id)
         {
             var city = _cityService.Get(id);

@@ -1,4 +1,5 @@
-﻿using MongoDB.Bson.Serialization.Attributes;
+﻿using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace AndreTurismoMongoDb.Models
 {
@@ -6,7 +7,7 @@ namespace AndreTurismoMongoDb.Models
     {
         #region[Properties]
         [BsonId]
-        [BsonRepresentation(MongoDB.Bson.BsonType.ObjectId)]
+        [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
         public string? Street { get; set; }
         public int Number { get; set; }
@@ -15,15 +16,6 @@ namespace AndreTurismoMongoDb.Models
         public string? Complement { get; set; }
         public City City { get; set; }
         public DateTime RegisterDate { get; set; }
-        #endregion
-
-        //public override string ToString()
-        //{
-        //    return $"Id: {Id}\n" +
-        //           $"Logradouro: {Street}, nº {Number}, Compl:{Complement}\n" +
-        //           $"Bairro: {Neighborhood},     {City.Description}\n" +
-        //           $"CEP: {ZipCode}\n" +
-        //           $"Registrado em: {RegisterDate}\n";
-        //}
+        #endregion        
     }
 }

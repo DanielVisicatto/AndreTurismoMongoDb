@@ -17,16 +17,33 @@ namespace AndreTurismoMongoDb.Services
         }
 
         public List<City> Get() => _city.Find(x => true).ToList();
+
+
         public City Get(string id) => _city.Find<City>(x => x.Id == id).FirstOrDefault();
+
+
+        public City GetCity(City city) => _city.Find<City>(x => 
+        x.Id == city.Id &&
+        x.Description == city.Description &&
+        x.RegisterDate == city.RegisterDate)
+            .FirstOrDefault();
+
+
         public City GetByName(string description) => _city.Find<City>(x => x.Description == description).FirstOrDefault();
+
+
         public City Create(City city)
         {
-            _city.InsertOne(city);
             city.Id = BsonObjectId.GenerateNewId().ToString();
+            _city.InsertOne(city);
             return city;
         }
         public void Update (string id, City city) => _city.ReplaceOne(x => x.Id == id, city);
+
+
         public void Delete (string id) => _city.DeleteOne(x => x.Id == id);
+
+
         public void Delete(City city) => _city.DeleteOne(x => x.Id == city.Id);
     }
 }

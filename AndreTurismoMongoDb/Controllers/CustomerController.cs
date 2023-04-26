@@ -19,11 +19,10 @@ namespace AndreTurismoMongoDb.Controllers
             _cityService = cityService;
         }
 
-
         [HttpGet("/Customer")]
         public ActionResult<List<Customer>> Get() => _customerService.Get();
 
-        [HttpGet("{id:length(24)}", Name = "GetCustomer")]
+        [HttpGet(Name = "GetCustomer")]
         public ActionResult<Customer> Get(string id)
         {
             var customer = _customerService.Get(id);
@@ -34,24 +33,19 @@ namespace AndreTurismoMongoDb.Controllers
         [HttpPost]
         public ActionResult<Customer> Create(Customer customer)
         {
-            var addressFound = _addressService.Get(customer.Address.Id);
             var cityFound = _cityService.GetByName(customer.Address.City.Description);
-            
-            if (addressFound == null && cityFound == null)
-            {
-                customer.Address.City = _cityService.Create(customer.Address.City);
-                customer.Address = _addressService.Create(customer.Address);
-            }
-            else if( addressFound != null && cityFound == null)
-            {
-                customer.Address.City = _cityService.Create(customer.Address.City);                
+            var addressFound = _addressService.GetBy(customer.Address.Street);            
+
+            if( cityFound.Id == null)            
+                customer.Address.City = _cityService.Create(customer.Address.City);           
+            else            
+                customer.Address.City = cityFound;                   
+                       
+            if (addressFound.Id == null)                           
+                customer.Address = _addressService.Create(customer.Address);            
+            else            
                 customer.Address = addressFound;
-            }
-            else //(addressFound == null && cityFound != null)
-            {
-                customer.Address.City = cityFound;
-                customer.Address = _addressService.Create(customer.Address);                
-            }           
+            
             _customerService.Create(customer);
             return Ok();
         }
